@@ -1,0 +1,3 @@
+rootProject.name = 'certstreamviz'
+
+include 'services', 'web'
