@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 
 import certstreamviz.models.Coordinate;
 import certstreamviz.models.certstreammessage.CertStreamMessage;
+import certstreamviz.models.certstreammessage.LeafCert;
 import io.calidog.certstream.CertStream;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.FluxSink;
 
 @Service
 public class CertStreamService {
@@ -37,10 +39,7 @@ public class CertStreamService {
         // http://projectreactor.io/docs/core/snapshot/reference/#_hybrid_push_pull_model
         //
         // Flux.create is used to bridge exsiting apis with reactor
-        Flux<String> bridge = Flux.create(sink -> {
-            CertStream.onMessageString(msg -> sink.next(msg));
-        });
-
+        Flux<String> bridge = certStreamBridge();
         // flatMap let you return an empty
         return bridge.flatMap(msg -> {
             try {
@@ -51,13 +50,20 @@ public class CertStreamService {
             }
         }).map(msg -> {
 
-            Optional<Coordinate> coordinate = geolocateIpAddressService
-                    .geolocateIpAddress(msg.getData().getLeafCert().getSubject().getCN());
+            LeafCert leafCert = msg.getData().getLeafCert();
+			Optional<Coordinate> coordinate = geolocateIpAddressService
+                    .geolocateIpAddress(leafCert.getSubject().getCN());
             coordinate.ifPresent(
-                    coord -> msg.getData().getLeafCert().setCoordinate(new Coordinate(coord.getLatitude(), coord.getLongitude())));
+                    coord -> leafCert.setCoordinate(new Coordinate(coord.getLatitude(), coord.getLongitude())));
 
             return msg;
         });
 
+    }
+
+    protected Flux<String> certStreamBridge() {
+        return Flux.create(sink -> {
+            CertStream.onMessageString(msg -> sink.next(msg));
+        });
     }
 }
