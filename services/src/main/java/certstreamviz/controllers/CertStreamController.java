@@ -1,5 +1,6 @@
 package certstreamviz.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.ServerSentEvent;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ public class CertStreamController {
 
     private CertStreamService certStreamService;
 
+    @Autowired
     CertStreamController(CertStreamService certStreamService) {
         this.certStreamService = certStreamService;
     }
@@ -23,9 +25,7 @@ public class CertStreamController {
     // https://www.html5rocks.com/en/tutorials/eventsource/basics/
     @GetMapping(path = "sse", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public Flux<ServerSentEvent<CertStreamMessageView>> streamCerts() {
-        return certStreamService.getStream().map(msg ->  CertStreamMessageView.convertMsgToView.apply(msg))
+        return certStreamService.getStream().map(msg -> CertStreamMessageView.convertMsgToView.apply(msg))
                 .map(s -> ServerSentEvent.builder(s).build());
     }
 }
-
-  

@@ -19,7 +19,7 @@ public class CertStreamMessageView {
 
             Data data = msg.getData();
             view.cn = data.getLeafCert().getSubject().getCN();
-            view.coordinate = (Coordinate) msg.getAdditionalProperties().get("Coordinate");
+            view.coordinate = data.getLeafCert().getCoordinate();
             view.issuer = data.getChain().get(0).getSubject().getCN();
             view.source = data.getSource().getName();
 

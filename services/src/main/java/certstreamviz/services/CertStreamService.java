@@ -54,7 +54,7 @@ public class CertStreamService {
             Optional<Coordinate> coordinate = geolocateIpAddressService
                     .geolocateIpAddress(msg.getData().getLeafCert().getSubject().getCN());
             coordinate.ifPresent(
-                    c -> msg.setAdditionalProperty("Coordinate", new Coordinate(c.getLatitude(), c.getLongitude())));
+                    c -> msg.getData().getLeafCert().setCoordinate(new Coordinate(c.getLatitude(), c.getLongitude())));
 
             return msg;
         });

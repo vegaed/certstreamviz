@@ -1,26 +1,15 @@
 
 package certstreamviz.models.certstreammessage;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({
-    "cert_index",
-    "cert_link",
-    "chain",
-    "leaf_cert",
-    "seen",
-    "source",
-    "update_type"
-})
+@JsonPropertyOrder({ "cert_index", "cert_link", "chain", "leaf_cert", "seen", "source", "update_type" })
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class Data {
 
     @JsonProperty("cert_index")
@@ -37,8 +26,6 @@ public class Data {
     private Source source;
     @JsonProperty("update_type")
     private String updateType;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * No args constructor for use in serialization
@@ -57,7 +44,8 @@ public class Data {
      * @param leafCert
      * @param updateType
      */
-    public Data(Integer certIndex, String certLink, List<Chain> chain, LeafCert leafCert, Double seen, Source source, String updateType) {
+    public Data(Integer certIndex, String certLink, List<Chain> chain, LeafCert leafCert, Double seen, Source source,
+            String updateType) {
         super();
         this.certIndex = certIndex;
         this.certLink = certLink;
@@ -97,6 +85,7 @@ public class Data {
     public void setChain(List<Chain> chain) {
         this.chain = chain;
     }
+
     @JsonProperty("leaf_cert")
     public LeafCert getLeafCert() {
         return leafCert;
@@ -135,16 +124,6 @@ public class Data {
     @JsonProperty("update_type")
     public void setUpdateType(String updateType) {
         this.updateType = updateType;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }

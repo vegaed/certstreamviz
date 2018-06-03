@@ -1,24 +1,13 @@
 
 package certstreamviz.models.certstreammessage;
 
-import java.util.HashMap;
-import java.util.Map;
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-@JsonPropertyOrder({
-    "C",
-    "CN",
-    "L",
-    "O",
-    "OU",
-    "ST",
-    "aggregated"
-})
+@JsonPropertyOrder({ "C", "CN", "L", "O", "OU", "ST", "aggregated" })
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class Subject {
 
     @JsonProperty("C")
@@ -35,8 +24,6 @@ public class Subject {
     private String sT;
     @JsonProperty("aggregated")
     private String aggregated;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * No args constructor for use in serialization
@@ -134,16 +121,6 @@ public class Subject {
     @JsonProperty("aggregated")
     public void setAggregated(String aggregated) {
         this.aggregated = aggregated;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }

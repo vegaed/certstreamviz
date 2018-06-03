@@ -1,29 +1,19 @@
 
 package certstreamviz.models.certstreammessage;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-//Created using http://www.jsonschema2pojo.org/
-@JsonPropertyOrder({
-    "data",
-    "message_type"
-})
+//Orignially Created using http://www.jsonschema2pojo.org/
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonPropertyOrder({ "data", "message_type" })
 public class CertStreamMessage {
 
     @JsonProperty("data")
     private Data data;
     @JsonProperty("message_type")
     private String messageType;
-    @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     /**
      * No args constructor for use in serialization
@@ -48,7 +38,6 @@ public class CertStreamMessage {
         return data;
     }
 
-
     @JsonProperty("data")
     public void setData(Data data) {
         this.data = data;
@@ -62,16 +51,6 @@ public class CertStreamMessage {
     @JsonProperty("message_type")
     public void setMessageType(String messageType) {
         this.messageType = messageType;
-    }
-
-    @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
-        return this.additionalProperties;
-    }
-
-    @JsonAnySetter
-    public void setAdditionalProperty(String name, Object value) {
-        this.additionalProperties.put(name, value);
     }
 
 }
