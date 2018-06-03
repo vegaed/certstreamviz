@@ -29,7 +29,7 @@ public class MindMaxGeoLocateIpAddressService implements IGeolocateIpAddressServ
     private Counter successCounter = Metrics.counter("geolocate.success");
     private Counter failureCounter = Metrics.counter("geolocate.failure");
 
-    DatabaseReader cityDbReader;
+    private DatabaseReader cityDbReader;
 
     MindMaxGeoLocateIpAddressService() throws IOException {
 
