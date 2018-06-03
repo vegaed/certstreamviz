@@ -1,7 +1,5 @@
 package certstreamviz.controllers;
 
-import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.BDDMockito.given;
 
 import java.io.IOException;
@@ -45,15 +43,21 @@ public class CertStreamControllerTests {
 
     private ObjectMapper om;
 
+    private CertStreamMessage firstMsg;
+    private CertStreamMessage fifthMsg;
+    private CertStreamMessageView firstMsgView;
+    private CertStreamMessageView fifthMsgView;
+
     @Before
     public void setUp() throws JsonParseException, JsonMappingException, IOException {
-        // Needed to fix Timeout on blocking read for 5000 MILLISECONDS. When running
-        // against real data
         InputStream is = this.getClass().getResourceAsStream("/certstreammessage");
+        // TODO: get spring object mapper
         om = new ObjectMapper();
         CertStreamMessage msg = om.readValue(is, CertStreamMessage.class);
-        CertStreamMessage firstMsg = createTestCertStreamMessage(msg, "1", null, null, null);
-        CertStreamMessage fifthMsg = createTestCertStreamMessage(msg, "5", "source", "issuer", COORDINATE);
+        firstMsg = createTestCertStreamMessage(msg, "1", null, null, null);
+        fifthMsg = createTestCertStreamMessage(msg, "5", "source", "issuer", COORDINATE);
+        firstMsgView = CertStreamMessageView.convertMsgToView.apply(firstMsg);
+        fifthMsgView = CertStreamMessageView.convertMsgToView.apply(fifthMsg);
 
         given(this.certStreamService.getStream()).willReturn(Flux.just(firstMsg, msg, msg, msg, fifthMsg));
     }
@@ -66,13 +70,8 @@ public class CertStreamControllerTests {
                 .accept(MediaType.TEXT_EVENT_STREAM).exchange().expectStatus().isOk().expectHeader()
                 .contentType("text/event-stream;charset=UTF-8").returnResult(CertStreamMessageView.class);
 
-        StepVerifier.create(result.getResponseBody()).assertNext(csmv -> assertThat("cnddfd", csmv.cn, is("1")))
-                .expectNextCount(3).assertNext(csmv -> {
-                    assertThat("cn 5", csmv.cn, is("5"));
-                    assertThat("source", csmv.source, is("source"));
-                    assertThat("issuer", csmv.issuer, is("issuer"));
-                    assertThat("coordinate", csmv.coordinate, is(COORDINATE));
-                }).thenCancel().verify();
+        StepVerifier.create(result.getResponseBody()).expectNext(firstMsgView).expectNextCount(3)
+                .expectNext(fifthMsgView).thenCancel().verify();
     }
 
     // Using this to override the key fields for testing
@@ -88,7 +87,7 @@ public class CertStreamControllerTests {
         }
 
         if (coordinate != null) {
-             leafCert.setCoordinate(coordinate);
+            leafCert.setCoordinate(coordinate);
         }
 
         if (source != null) {

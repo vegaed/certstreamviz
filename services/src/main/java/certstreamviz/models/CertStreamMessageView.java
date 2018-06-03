@@ -1,5 +1,6 @@
 package certstreamviz.models;
 
+import java.util.Objects;
 import java.util.function.Function;
 
 import certstreamviz.models.certstreammessage.CertStreamMessage;
@@ -26,4 +27,22 @@ public class CertStreamMessageView {
             return view;
         }
     };
+
+    @Override
+    public boolean equals(Object o) {
+
+        if (o == this)
+            return true;
+        if (!(o instanceof CertStreamMessageView)) {
+            return false;
+        }
+        CertStreamMessageView csmv = (CertStreamMessageView) o;
+        return Objects.equals(source, csmv.source) && Objects.equals(cn, csmv.cn) && Objects.equals(issuer, csmv.issuer)
+                && Objects.equals(coordinate, csmv.coordinate);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(source, cn, issuer, coordinate);
+    }
 }
