@@ -1,15 +1,12 @@
 package certstreamviz.models;
 
+import static org.hamcrest.Matchers.is;
+import static org.junit.Assert.assertThat;
+
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
 import org.json.JSONException;
 import org.junit.Test;
@@ -64,5 +61,4 @@ public class CertStreamMessageViewTest {
         expected.source = "Google 'Argon2018' log";
         assertThat(view, is(expected));
     }
-
 }
