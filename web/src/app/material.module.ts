@@ -5,7 +5,8 @@ import {
   MatPaginatorModule,
   MatSortModule,
   MatInputModule,
-  MatSlideToggleModule
+  MatSlideToggleModule,
+  MatTooltipModule
 } from '@angular/material';
 import { MatFormFieldModule } from '@angular/material/form-field';
 
@@ -17,7 +18,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatSortModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTooltipModule
   ],
   exports: [
     MatTableModule,
@@ -25,7 +27,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
     MatSortModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatTooltipModule
   ]
 })
 export class MaterialModule {}

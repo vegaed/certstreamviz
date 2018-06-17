@@ -10,12 +10,14 @@ import { MapComponent } from './map/map.component';
 import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 import { LeafletMarkerClusterModule } from '@asymmetrik/ngx-leaflet-markercluster';
 import { FilterComponent } from './filter/filter.component';
+import { CommonModule } from '@angular/common';
 
 @NgModule({
   declarations: [AppComponent, TableComponent, MapComponent, FilterComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
+    CommonModule,
     MaterialModule,
     LeafletModule.forRoot(),
     LeafletMarkerClusterModule.forRoot()

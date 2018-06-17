@@ -14,6 +14,7 @@ import { TableDataSource } from './table-datasource';
 import { Observable } from 'rxjs';
 import { Cert } from '../models/cert';
 import { ImprovedTableDataSource } from './improved-table-datasource';
+import { Coordinate } from '../models/coordinate';
 
 @Component({
   selector: 'app-cert-table',
@@ -27,11 +28,12 @@ export class TableComponent implements OnInit, AfterViewChecked {
   @Input() certs$: Observable<Cert[]>;
   @Input() textFilter$: Observable<string>;
   @Output() filteredCerts = new EventEmitter<Cert[]>();
+  @Output() clickedCoordinate = new EventEmitter<Coordinate>();
   dataSource: TableDataSource;
   improvedDataSource: ImprovedTableDataSource;
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['cn', 'issuer', 'source'];
+  displayedColumns = ['cn', 'issuer', 'source', 'coordinate'];
 
   constructor(private cdRef: ChangeDetectorRef) {}
   ngAfterViewChecked(): void {}
@@ -56,5 +58,10 @@ export class TableComponent implements OnInit, AfterViewChecked {
     this.textFilter$.subscribe(text => {
       this.improvedDataSource.applyFilter(text);
     });
+  }
+
+  coordinateClicked(cert: Cert) {
+    console.log(cert);
+    this.clickedCoordinate.next(cert.coordinate);
   }
 }

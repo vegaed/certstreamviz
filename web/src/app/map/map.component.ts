@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 import { Cert } from '../models/cert';
 import { map, filter, flatMap } from 'rxjs/operators';
 import { Bounds } from '../models/bounds';
+import { Coordinate } from '../models/coordinate';
 
 @Component({
   selector: 'app-map',
@@ -27,6 +28,7 @@ import { Bounds } from '../models/bounds';
 })
 export class MapComponent implements OnInit, AfterViewChecked {
   @Input() certs$: Observable<Cert[]>;
+  @Input() coordinateSelected$: Observable<Coordinate>;
   @Output() bounds = new EventEmitter<Bounds>();
 
   options = {
@@ -56,8 +58,7 @@ export class MapComponent implements OnInit, AfterViewChecked {
   };
 
   constructor(private cdRef: ChangeDetectorRef) {}
-  ngAfterViewChecked(): void {
-  }
+  ngAfterViewChecked(): void {}
   ngOnInit() {
     const markers$ = this.certs$.pipe(
       map(certs => {
@@ -83,6 +84,13 @@ export class MapComponent implements OnInit, AfterViewChecked {
       const sw = leafletMap.getBounds().getSouthWest();
       const bounds = new Bounds(ne.lat, sw.lat, ne.lng, sw.lng);
       this.bounds.emit(bounds);
+    });
+    this.coordinateSelected$.subscribe(coordinate => {
+      leafletMap.setView(
+        L.latLng(coordinate.latitude, coordinate.longitude),
+        10
+      );
+      console.log('gotit');
     });
   }
 }

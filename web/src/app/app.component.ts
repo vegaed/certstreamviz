@@ -3,9 +3,10 @@ import { CertStore } from './state/cert-store';
 import { Cert } from './models/cert';
 import { filter, map, retry, share } from 'rxjs/operators';
 import { EventSourcePolyfill } from 'ng-event-source';
-import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
+import { Observable, BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { Bounds } from './models/bounds';
+import { Coordinate } from './models/coordinate';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +22,7 @@ export class AppComponent implements OnInit {
   bounds$ = new BehaviorSubject<Bounds>(new Bounds(90, -90, 180, -180));
   textFilter$ = new BehaviorSubject<string>('');
   geoFilter$ = new BehaviorSubject<boolean>(false);
+  coordinateSelected$ = new Subject<Coordinate>();
 
   tempcerts$ = this.certStore
     .select()
@@ -71,7 +73,7 @@ export class AppComponent implements OnInit {
         eventSource.close();
       };
     });
-    const thing = events.pipe(retry());
+    const thing = events.pipe(retry()).pipe(take(10));
 
     // subscribe to events and add them to the store.
     thing.subscribe((msg: string) => {
@@ -96,5 +98,9 @@ export class AppComponent implements OnInit {
 
   filterTextChange(text: string) {
     this.textFilter$.next(text);
+  }
+
+  clickedCoordinate(coordinate: Coordinate) {
+    this.coordinateSelected$.next(coordinate);
   }
 }
