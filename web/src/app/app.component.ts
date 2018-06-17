@@ -29,18 +29,16 @@ export class AppComponent implements OnInit {
 
   certs$ = combineLatest(this.tempcerts$, this.bounds$, this.geoFilter$).pipe(
     map((tuple: [Cert[], Bounds, boolean]) => {
-      // TODO: create object for this
       const certs = tuple['0'];
       const bounds = tuple['1'];
       const geoFilter = tuple['2'];
-      // const geoFilter = tuple['2'];
       return certs.filter(cert => {
-        const cords = cert.coordinate;
-        // skip if no coordinates
-        if (cords == null) {
+        const coords = cert.coordinate;
+        // if no coordinates handled if included or not by the toggle
+        if (coords == null) {
           return geoFilter;
         }
-        return bounds.contains(cords);
+        return bounds.contains(coords);
       });
     }),
     share()
@@ -75,7 +73,7 @@ export class AppComponent implements OnInit {
     });
     const thing = events.pipe(retry());
 
-    // subscribe to evetns and add them to the store.
+    // subscribe to events and add them to the store.
     thing.subscribe((msg: string) => {
       const cert: Cert = JSON.parse(msg);
       this.certStore.addCert(cert);
