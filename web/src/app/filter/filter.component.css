@@ -1,0 +1,19 @@
+.filters {
+    display: flex;
+    align-items: baseline;
+    align-content: space-between;
+    padding: 0 1em 0 1em;
+}
+
+.textFilter {
+    flex: 8;
+}
+
+.geoFilter {
+    flex: 2;
+    text-align: right;
+}
+
+.fullWidth{
+  width: 100%;
+}

@@ -1,0 +1,10 @@
+<div class=filters>
+  <div class="textFilter">
+    <mat-form-field class="fullWidth">
+      <input matInput (keyup)="applyTextFilter($event.target.value)" placeholder="Filter">
+    </mat-form-field>
+  </div>
+  <div class="geoFilter">
+    <mat-slide-toggle [checked]="geoChecked" (change)="applyGeoFilter($event)" color="primary">Show certs without coordinates</mat-slide-toggle>
+  </div>
+</div>
