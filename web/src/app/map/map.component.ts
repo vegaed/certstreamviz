@@ -85,12 +85,12 @@ export class MapComponent implements OnInit, AfterViewChecked {
       const bounds = new Bounds(ne.lat, sw.lat, ne.lng, sw.lng);
       this.bounds.emit(bounds);
     });
+
     this.coordinateSelected$.subscribe(coordinate => {
       leafletMap.setView(
         L.latLng(coordinate.latitude, coordinate.longitude),
         10
       );
-      console.log('gotit');
     });
   }
 }

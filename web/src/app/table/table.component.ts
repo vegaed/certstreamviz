@@ -61,7 +61,6 @@ export class TableComponent implements OnInit, AfterViewChecked {
   }
 
   coordinateClicked(cert: Cert) {
-    console.log(cert);
     this.clickedCoordinate.next(cert.coordinate);
   }
 }

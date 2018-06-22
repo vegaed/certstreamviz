@@ -2,11 +2,11 @@ import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { CertStore } from './state/cert-store';
 import { Cert } from './models/cert';
 import { filter, map, retry, share } from 'rxjs/operators';
-import { EventSourcePolyfill } from 'ng-event-source';
 import { Observable, BehaviorSubject, combineLatest, Subject } from 'rxjs';
 import { take } from 'rxjs/operators';
 import { Bounds } from './models/bounds';
 import { Coordinate } from './models/coordinate';
+import { EventSourceService } from './eventsource.service';
 
 @Component({
   selector: 'app-root',
@@ -20,16 +20,23 @@ export class AppComponent implements OnInit {
   filteredCerts$ = new BehaviorSubject<Cert[]>([]);
   // inital bounds are the whole world.
   bounds$ = new BehaviorSubject<Bounds>(new Bounds(90, -90, 180, -180));
+  // no text filter
   textFilter$ = new BehaviorSubject<string>('');
+  // only show geo items
   geoFilter$ = new BehaviorSubject<boolean>(false);
   coordinateSelected$ = new Subject<Coordinate>();
 
-  tempcerts$ = this.certStore
+  unfilteredCerts$ = this.certStore
     .select()
     .unbounded()
     .pipe(map(certState => certState.certs));
 
-  certs$ = combineLatest(this.tempcerts$, this.bounds$, this.geoFilter$).pipe(
+  // combine these three observables so that when one chages the filtering can happen again and send a new set of certs
+  certs$ = combineLatest(
+    this.unfilteredCerts$,
+    this.bounds$,
+    this.geoFilter$
+  ).pipe(
     map((tuple: [Cert[], Bounds, boolean]) => {
       const certs = tuple['0'];
       const bounds = tuple['1'];
@@ -46,40 +53,21 @@ export class AppComponent implements OnInit {
     share()
   );
 
-  constructor(private certStore: CertStore) {}
+  // get certstore from depencency injections
+  constructor(
+    private certStore: CertStore,
+    private eventSourceService: EventSourceService
+  ) {}
 
   ngOnInit(): void {
-    // Create obserable from event source
-    const events: Observable<string> = new Observable(observer => {
-      const eventSource = new EventSourcePolyfill(
-        'http://localhost:8080/sse',
-        {}
-      );
-
-      eventSource.onmessage = data => {
-        observer.next(data.data);
-      };
-      eventSource.onopen = a => {
-        console.log('open event source' + JSON.stringify(a));
-      };
-      eventSource.onerror = e => {
-        console.log('Error' + e);
-        observer.error(e);
-      };
-
-      // cleanup
-      return () => {
-        console.log('disposed');
-        eventSource.close();
-      };
-    });
-    const thing = events.pipe(retry()).pipe(take(10));
-
+    // pipe into retry so that if there is an issue the service will resubscribe then
     // subscribe to events and add them to the store.
-    thing.subscribe((msg: string) => {
-      const cert: Cert = JSON.parse(msg);
-      this.certStore.addCert(cert);
-    });
+    this.eventSourceService.getEvents$
+      .pipe(retry())
+      .subscribe((msg: string) => {
+        const cert: Cert = JSON.parse(msg);
+        this.certStore.addCert(cert);
+      });
   }
 
   // mappped to table filtered output
@@ -87,20 +75,22 @@ export class AppComponent implements OnInit {
     this.filteredCerts$.next(certs);
   }
 
+  // mapped to the table place marker click
+  clickedCoordinate(coordinate: Coordinate) {
+    this.coordinateSelected$.next(coordinate);
+  }
   // mapped to the map bounds changes
   boundsChange(bounds: Bounds) {
     this.bounds$.next(bounds);
   }
 
+  // mapped to the filter toggle change
   filterGeoChange(checked: boolean) {
     this.geoFilter$.next(checked);
   }
 
+  // mapped to the filter text change
   filterTextChange(text: string) {
     this.textFilter$.next(text);
-  }
-
-  clickedCoordinate(coordinate: Coordinate) {
-    this.coordinateSelected$.next(coordinate);
   }
 }
