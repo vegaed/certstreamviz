@@ -1,0 +1,22 @@
+
+
+task buildBundle {
+    dependsOn 'copyWebIntoServices'
+    dependsOn ':services:build'
+}
+
+task copyWebIntoServices(type: Copy) {
+    dependsOn 'web:build'
+    from project(':web').file('dist/web')
+    into project(':services').file('src/main/resources/static')
+}
+
+task cleanBundle {
+    delete project(':services').file('src/main/resources/static')
+    subprojects.each { dependsOn("${it.name}:clean") } 
+}
+
+task runBundle {
+    dependsOn 'buildBundle'
+    dependsOn ':services:bootRun'
+}

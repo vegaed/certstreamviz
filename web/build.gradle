@@ -1,0 +1,39 @@
+plugins {
+    id 'com.moowork.node' version '0.8'
+}
+
+apply plugin: 'com.moowork.node'
+
+
+task clean(type: Delete) {
+  group "Build tasks"
+  description "Deletes the build directory."
+  delete "${projectDir}/dist"
+}
+
+task cleanNpm(type: Delete) {
+  group "Build tasks"
+  description "Deletes the node_modules and build directory."
+  dependsOn 'clean'
+  delete "${projectDir}/node_modules"
+}
+
+task build(type: NpmTask) {
+  group "Build tasks"
+  description "Assembles and tests this project."
+  dependsOn 'test'
+  args = ['run-script', 'build', '--', '--prod']
+}
+
+task run(type: NpmTask) {
+  group "Application tasks"
+  dependsOn 'test'
+  args = ['start']
+}
+
+task test(type: NpmTask) {
+  group "Verification tasks"
+  args = ['test', '--','--browsers=ChromeHeadless', '--watch=false']
+}
+
+test.dependsOn npm_install

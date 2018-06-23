@@ -24,9 +24,10 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 task copyTestResources(type: Copy) {
-    from "${projectDir}/src/test/resources"
-    into "${buildDir}/classes/test"
+    from '${projectDir}/src/test/resources'
+    into '${buildDir}/classes/test'
 }
+
 processTestResources.dependsOn copyTestResources
 
 dependencies {
