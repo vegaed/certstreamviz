@@ -12,7 +12,7 @@ buildscript {
 
 repositories {
 	mavenCentral()
-	maven { url "https://jitpack.io" }
+	maven { url 'https://jitpack.io' }
 }
 
 apply plugin: 'java'
@@ -24,6 +24,8 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 task copyTestResources(type: Copy) {
+	group 'Help'
+	description 'Copy test resource into the correct location'
     from '${projectDir}/src/test/resources'
     into '${buildDir}/classes/test'
 }

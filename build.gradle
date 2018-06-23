@@ -1,22 +1,30 @@
 
 
 task buildBundle {
+    group 'Build'
+    description 'Assembles and tests this bundled project.'
     dependsOn 'copyWebIntoServices'
     dependsOn ':services:build'
 }
 
 task copyWebIntoServices(type: Copy) {
+    group 'Help'
+    description 'Copies the web application into the Spring boot static folder'
     dependsOn 'web:build'
     from project(':web').file('dist/web')
     into project(':services').file('src/main/resources/static')
 }
 
 task cleanBundle {
+    group 'Build'
+    description 'Deletes the build directors for the bundle'
     delete project(':services').file('src/main/resources/static')
-    subprojects.each { dependsOn("${it.name}:clean") } 
+    subprojects.each { dependsOn('${it.name}:clean') } 
 }
 
 task runBundle {
+    group 'Application'
+    description 'Runs this bundle as a as a Spring Boot application.'
     dependsOn 'buildBundle'
     dependsOn ':services:bootRun'
 }
