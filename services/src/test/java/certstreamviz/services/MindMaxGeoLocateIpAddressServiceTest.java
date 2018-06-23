@@ -29,15 +29,13 @@ public class MindMaxGeoLocateIpAddressServiceTest {
     @Test
     public void testValidHostByName() {
         Optional<Coordinate> coordinate = service.geolocateIpAddress("www.google.com");
-        Optional<Coordinate> expected = Optional.of(new Coordinate(37.419200000000004, -122.057400));
-        assertThat(coordinate, is(expected));
+        assertThat(coordinate.isPresent(), is(true));
     }
 
     @Test
     public void testValidHostByNameWithoutSubDomain() {
         Optional<Coordinate> coordinate = service.geolocateIpAddress("google.com");
-        Optional<Coordinate> expected = Optional.of(new Coordinate(37.419200000000004, -122.057400));
-        assertThat(coordinate, is(expected));
+        assertThat(coordinate.isPresent(), is(true));
     }
 
     @Test

@@ -1,0 +1,16 @@
+language: java
+sudo: required
+addons:
+  chrome: stable
+jdk:
+  - oraclejdk8
+  - oraclejdk9
+  - openjdk8
+  - openjdk9
+env:
+  - NODE_VERSION=9
+before_install:
+  - nvm install $NODE_VERSION
+install:
+  - ./gradlew web:npm_install
+script: ./gradlew buildBundle
