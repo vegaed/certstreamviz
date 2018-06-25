@@ -20,15 +20,12 @@ import reactor.core.publisher.FluxSink;
 public class CertStreamService {
     private static final Logger logger = LoggerFactory.getLogger(CertStreamService.class);
 
-    // @Autowired
-    // private MappingJackson2HttpMessageConverter springJacksonConverter;
-
     private ObjectMapper objectMapper;
     private IGeolocateIpAddressService geolocateIpAddressService;
 
     CertStreamService(IGeolocateIpAddressService geolocateIpAddressService) {
-        // TODO: get the singleton object mapper used in spring
-        objectMapper = new ObjectMapper();// springJacksonConverter.getObjectMapper();
+        // TODO: in the future get the singleton object mapper used in spring
+        objectMapper = new ObjectMapper();
         this.geolocateIpAddressService = geolocateIpAddressService;
     }
 
@@ -49,7 +46,6 @@ public class CertStreamService {
                 return Flux.empty();
             }
         }).map(msg -> {
-
             LeafCert leafCert = msg.getData().getLeafCert();
 			Optional<Coordinate> coordinate = geolocateIpAddressService
                     .geolocateIpAddress(leafCert.getSubject().getCN());
@@ -58,7 +54,6 @@ public class CertStreamService {
 
             return msg;
         });
-
     }
 
     protected Flux<String> certStreamBridge() {
